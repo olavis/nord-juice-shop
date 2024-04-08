@@ -55,6 +55,7 @@ function usage() {
         wipe-all\tRemoves the cluster, resource group, and key vault.
         write-secrets\tWrite the secrest to Azure Key Vault.
         password\tRetrieve the admin password for the multi-juicer instance
+        cluster-auth\tGet the credentials for the cluster
     "
     exit 0
 }
@@ -277,6 +278,9 @@ case "$COMMAND" in
         ;;
     "password")
         get_admin_password
+        ;;
+    "cluster-auth")
+        get_cluster_credentials
         ;;
     *)
         failure "Invalid argument '$COMMAND'\n"

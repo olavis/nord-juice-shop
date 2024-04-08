@@ -21,8 +21,8 @@ on:
         required: true
 
 permissions:
-      id-token: write # Required for requesting the JWT
-      contents: read
+  id-token: write # Required for requesting the JWT
+  contents: read
 
 jobs:
   deploy:
@@ -70,6 +70,9 @@ jobs:
           go install github.com/a8m/envsubst/cmd/envsubst@v1.4.2
 
       - name: Create the Kubernetes cluster in AKS
+        env:
+          AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+          AZURE_DNS_NAME: ${{ vars.AZURE_DNS_NAME }}
         run: |
           ./manage-azure-deployment.sh new
 
@@ -79,8 +82,10 @@ jobs:
           COOKIE_SECRET: ${{ secrets.COOKIE_SECRET }}
           CTFD_SECRET_KEY: ${{ secrets.CTFD_SECRET_KEY }}
           JUICE_FQDN: ${{ vars.JUICE_FQDN }}
+          TLS_CERT_EMAIL: ${{ vars.TLS_CERT_EMAIL }}
           BALANCER_REPLICAS: ${{ vars.BALANCER_REPLICAS }}
           MAX_INSTANCES: ${{ vars.MAX_INSTANCES }}
+          METRICS_USER: ${{ vars.METRICS_USER }}
           GRACE_PERIOD: ${{ vars.GRACE_PERIOD }}
           MANAGE_MONITORING: ${{ vars.MANAGE_MONITORING }}
           MANAGE_CTFD: ${{ vars.MANAGE_CTFD }}
@@ -92,38 +97,3 @@ jobs:
           CTFD_MYSQL_REPL_PASS: ${{ secrets.CTFD_MYSQL_REPL_PASS }}
         run: |
           ./manage-multijuicer.sh up
-
-  # import-challenges:
-  #   name: Import challenges to CTFd
-  #   runs-on: ubuntu-latest
-  #   environment: ${{ inputs.ENVIRONMENT }}
-  #   needs: [deploy]
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-
-  #     - name: Install kubectl
-  #       uses: azure/setup-kubectl@v3
-  #       with:
-  #         version: 'v1.29.1'
-
-  #     - name: Install node
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20
-
-  #     - name: Install juice-shop-ctf-cli
-  #       run: npm install -g juice-shop-ctf-cli
-
-  #     - name: Generate challenges
-  #       env:
-  #         CTF_KEY: ${{ secrets.CTF_KEY }}
-  #       run: |
-  #         ./generate-challenges.sh
-
-  #     - name: Upload CTFd challenges file as an artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: ctfd-challenges.csv
-  #         path: ctfd-challenges-*.csv
-  #         retention-days: 7

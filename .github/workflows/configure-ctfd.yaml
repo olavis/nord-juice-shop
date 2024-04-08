@@ -1,0 +1,79 @@
+name: Deploy CTF services on Azure Kubernetes Service
+on:
+  workflow_dispatch:
+    inputs:
+      ENVIRONMENT:
+        default: ctf
+        description: The name of the GitHub environment to use (https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment#about-environments)
+        type: environment
+  workflow_call:
+    inputs:
+      ENVIRONMENT:
+        default: ctf
+        description: The name of the GitHub environment to use (https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment#about-environments)
+        type: string
+    secrets:
+      AZURE_CLIENT_ID:
+        required: true
+      AZURE_TENANT_ID:
+        required: true
+      AZURE_SUBSCRIPTION_ID:
+        required: true
+
+permissions:
+  id-token: write # Required for requesting the JWT
+  contents: read
+
+jobs:
+  configure-ctfd:
+    name: Configure CTFd
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.ENVIRONMENT }}
+    steps:
+      - name: Run az login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.29.1'
+
+      - name: Install node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install juice-shop-ctf-cli
+        run: npm install -g juice-shop-ctf-cli
+
+      - name: Get AKS cluster credentials
+        run: |
+          ./manage-azure-deployment.sh cluster-auth
+
+      - name: Configure the CTFd instance
+        env:
+          CTF_KEY: ${{ secrets.CTF_KEY }}
+          JUICE_FQDN: ${{ vars.JUICE_FQDN }}
+          CTFD_ADMIN_PASSWORD: ${{ secrets.CTFD_ADMIN_PASSWORD }}
+          CTF_NAME: ${{ vars.CTF_NAME }}
+          CTF_DESC: ${{ vars.CTF_DESC }}
+          CTFD_REGISTRATION_CODE: ${{ vars.CTFD_REGISTRATION_CODE }}
+          CTF_TEAM_SIZE: ${{ vars.CTF_TEAM_SIZE }}
+          CTF_START_DATETIME: ${{ vars.CTF_START_DATETIME }}
+          CTF_END_DATETIME: ${{ vars.CTF_END_DATETIME }}
+        run: |
+          ./manage-ctfd.sh run
+
+      - name: Upload CTFd challenges file as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ctfd-challenges.csv
+          path: ctfd-challenges-*.csv
+          retention-days: 7
