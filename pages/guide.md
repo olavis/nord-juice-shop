@@ -7,7 +7,7 @@ Dette er CTF plattformen vi bruker.
 Her må dere registrere dere for å kunne levere flaggene i bytte mot poeng.
 
 - *Alle*: Gå til [/register](/ctfd/register) og lag en bruker (trenger ikke bruke en ekte e-post)
-- *En person fra laget*: Gå til [/team](/ctfd/team) og lag en team, velg et navn (lowercase, tall og `-`) og et passord
+- *En person fra laget*: Gå til [/team](/ctfd/team) og lag et team, velg et navn (lowercase, tall og `-`) og et passord
 - *Resten av laget*: Velg Join Team, fyll inn navn og passord
 
 Flagg leveres inn på [/challenges](/ctfd/challenges).  
@@ -19,7 +19,7 @@ Denne brukes til å gi hvert lag sin egen instans av Juice Shop.
 
 - Gå til [MultiJuicer](/balancer)
 - *En person fra laget*: Fyll inn lagnavn og velg Create Team
-- Skriv ned koden, og del den med laget (hover over prikkene for å se den)
+- **Skriv ned koden**, og del den med laget (hover over prikkene for å se den)
 - *Resten av laget*: Fyll inn samme lagnavn og velg Join Team, skriv inn koden
 - Når det står "Juice Shop Instance Ready", trykk Start Hacking for å gå til Juice Shop
 
@@ -43,8 +43,8 @@ Når en oppgave løses får alle på laget en grønn pop-up med flagget for den 
 
 Når dere har funnet et flagg må det leveres mot poeng av en fra laget.
 - Kopier flagget (den lange koden), og noter deg navnet på oppgaven
-- Gå til CTFd > Challenges og søk etter navnet på oppgaven
+- Gå til [/ctfd/challenges](/ctfd/challenges) og søk etter navnet på oppgaven
 - Trykk på oppgaven, lim inn flagget og lever.
 - Sjekk hvem som leder på CTFd sin Scoreboard side
 
-I CTFd kan man og se hint for hver av oppgavene. Man får ingen minuspoeng for å sjekke hintene.
+I CTFd kan man og se hint for hver av oppgavene (disse er de samme man kan se i Juice Shop). Man får ingen minuspoeng for å sjekke hintene.
