@@ -169,12 +169,12 @@ function write_secrets_to_keyvault() {
     if __kv_exists; then
         # Push the CTFd DB password to the key vault
         __CTFD_DB_PASS=$(kubectl get secrets ctfd-mariadb -o=jsonpath='{.data.mariadb-password}' | base64 --decode)
-        [ -n "$__CTFD_DB_PASS" ] && az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "ctfd-db-password" --value "$__CTFD_DB_PASS" || failure "Failed to retrieve the CTFd DB password"
+        [ -n "$__CTFD_DB_PASS" ] && az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "ctfd-db-password" --value "$__CTFD_DB_PASS" -o none || failure "Failed to retrieve the CTFd DB password"
         # Push the CTFd DB root password to the key vault
         __CTFD_DB_ROOT_PASS=$(kubectl get secrets ctfd-mariadb -o=jsonpath='{.data.mariadb-root-password}' | base64 --decode)
-        [ -n "$__CTFD_DB_ROOT_PASS" ] && az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "ctfd-db-root-password" --value "$__CTFD_DB_ROOT_PASS" || failure "Failed to retrieve the CTFd DB root password"
+        [ -n "$__CTFD_DB_ROOT_PASS" ] && az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "ctfd-db-root-password" --value "$__CTFD_DB_ROOT_PASS" -o none || failure "Failed to retrieve the CTFd DB root password"
         # Push the multi-juicer admin password to the key vault
-        get_multi_juicer_admin_password && az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "multijuicer-admin-password" --value "$MULTI_JUICER_PASS"
+        get_multi_juicer_admin_password && az keyvault secret set --vault-name "$KEY_VAULT_NAME" --name "multijuicer-admin-password" --value "$MULTI_JUICER_PASS" -o none
     else
         failure "The keyvault '$KEY_VAULT_NAME' does not exist. It can be created automatically by setting 'MANAGE_KEYVAULT=1'"
     fi
